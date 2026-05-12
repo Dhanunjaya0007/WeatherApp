@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WeatherGlass</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ═══ ANIMATED SKY SCENE ═══ -->
+  <div id="scene" class="sunny">
+    <div id="lightning"></div>
+    <div id="sun"></div>
+    <div id="sun-rays"></div>
+    <div id="moon"></div>
+    <div id="stars"></div>
+    <div id="clouds"></div>
+    <div id="rain"></div>
+    <div id="snow"></div>
+    <div id="fog"></div>
+    <div id="heat"><div class="shimmer-layer"></div></div>
+  </div>
+
+  <!-- ═══ APP UI ═══ -->
+  <div id="app">
+
+    <div id="brand">WeatherGlass</div>
+
+    <div id="card">
+
+      <!-- Header -->
+      <div id="card-header">
+        <span id="weather-icon">🌤️</span>
+        <div id="card-title">What's the weather?</div>
+        <div id="card-subtitle">Powered by OpenWeatherMap · Flask backend</div>
+      </div>
+
+      <!-- Search -->
+      <div id="search-area">
+        <div id="search-wrap">
+          <span id="search-icon">⌕</span>
+          <input
+            id="city-input"
+            type="text"
+            placeholder="Enter city… e.g. Visakhapatnam"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <button id="submit-btn">
+          <div class="spin"></div>
+          <span id="btn-text">Get Weather</span>
+          <span id="btn-icon">→</span>
+        </button>
+      </div>
+
+      <!-- Error -->
+      <div id="error-msg"></div>
+
+      <!-- Result Panel -->
+      <div id="result">
+        <div id="result-header">
+          <div id="result-city-row">
+            <span id="r-city">—</span>
+            <span id="result-country">—</span>
+          </div>
+          <div id="result-temp">—°</div>
+          <div id="result-desc">—</div>
+        </div>
+        <div id="result-stats">
+          <div class="stat-box">
+            <div class="stat-label">Humidity</div>
+            <div class="stat-val" id="r-humidity">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Wind</div>
+            <div class="stat-val" id="r-wind">—</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Feels Like</div>
+            <div class="stat-val" id="r-feels">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+
+    <!-- Quick-search pills -->
+    <div id="quick-bar">
+      <span class="quick-pill" data-city="Visakhapatnam">📍 Visakhapatnam</span>
+      <span class="quick-pill" data-city="Mumbai">Mumbai</span>
+      <span class="quick-pill" data-city="Delhi">Delhi</span>
+      <span class="quick-pill" data-city="London">London</span>
+      <span class="quick-pill" data-city="Tokyo">Tokyo</span>
+      <span class="quick-pill" data-city="New York">New York</span>
+      <span class="quick-pill" data-city="Dubai">Dubai</span>
+    </div>
+
+    <!-- Backend status indicator -->
+    <div id="backend-status">
+      <span id="status-dot"></span>
+      <span id="status-text">Connecting to backend…</span>
+    </div>
+
+  </div><!-- /app -->
+
+  <div id="footer">
+    Run <code>python server.py</code> then open <code>http://localhost:5000</code>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
