@@ -1,23 +1,20 @@
 # ════════════════════════════════════════════════
-#  WeatherGlass — server.py (Fixed & Permanent)
-#  
-#  DO NOT run index.html directly.
-#  ALWAYS start via: start.bat  (double click)
-#  OR manually: python server.py
-#  THEN open: http://localhost:5000
+#  WeatherGlass — server.py
+#  Works on Windows, Mac and Linux
+#  Run via: start.bat (Windows) or ./start.sh (Mac/Linux)
+#  Then open: http://localhost:5000
 # ════════════════════════════════════════════════
 
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import requests
-import os
 import webbrowser
 import threading
+import sys
+import os
 
-# ── App setup ──────────────────────────────────
+# ── App Setup ──────────────────────────────────
 app = Flask(__name__, static_folder=".")
-
-# Allow requests from ALL origins permanently
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ── API Config ─────────────────────────────────
@@ -39,7 +36,8 @@ def static_files(filename):
 
 
 # ══════════════════════════════════════════════
-#  WEATHER API ENDPOINT
+#  WEATHER ENDPOINT
+#  Called by browser: /weather?city=Visakhapatnam
 # ══════════════════════════════════════════════
 
 @app.route("/weather")
@@ -48,7 +46,10 @@ def get_weather():
     city = request.args.get("city", "").strip()
 
     if not city:
-        return jsonify({"error": True, "message": "Please enter a city name."}), 400
+        return jsonify({
+            "error"  : True,
+            "message": "Please enter a city name."
+        }), 400
 
     try:
         params = {
@@ -60,16 +61,17 @@ def get_weather():
         response = requests.get(BASE_URL, params=params, timeout=8)
         data     = response.json()
 
+        # Print raw data in terminal for learning
         print("\n" + "─" * 50)
-        print(f"  City      : {city}")
-        print(f"  Status    : {data.get('cod')}")
-        print(f"  Response  : {data}")
+        print(f"  City     : {city}")
+        print(f"  Status   : {data.get('cod')}")
+        print(f"  Response : {data}")
         print("─" * 50 + "\n")
 
         if str(data.get("cod")) != "200":
             return jsonify({
                 "error"  : True,
-                "message": data.get("message", "City not found. Check spelling.")
+                "message": data.get("message", "City not found.")
             }), 404
 
         return jsonify({
@@ -86,18 +88,27 @@ def get_weather():
         })
 
     except requests.exceptions.ConnectionError:
-        return jsonify({"error": True, "message": "Cannot reach OpenWeatherMap. Check internet."}), 503
+        return jsonify({
+            "error"  : True,
+            "message": "No internet connection."
+        }), 503
 
     except requests.exceptions.Timeout:
-        return jsonify({"error": True, "message": "Request timed out. Try again."}), 504
+        return jsonify({
+            "error"  : True,
+            "message": "Request timed out. Try again."
+        }), 504
 
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"error": True, "message": "Server error. Check terminal."}), 500
+        print(f"  Error: {e}")
+        return jsonify({
+            "error"  : True,
+            "message": "Server error. Check terminal."
+        }), 500
 
 
 # ══════════════════════════════════════════════
-#  START SERVER
+#  AUTO OPEN BROWSER
 # ══════════════════════════════════════════════
 
 def open_browser():
@@ -105,13 +116,37 @@ def open_browser():
     time.sleep(1.5)
     webbrowser.open("http://localhost:5000")
 
+
+# ══════════════════════════════════════════════
+#  START SERVER
+# ══════════════════════════════════════════════
+
 if __name__ == "__main__":
+
+    # Detect OS
+    platform = sys.platform
+    if platform == "win32":
+        os_name = "Windows"
+    elif platform == "darwin":
+        os_name = "Mac"
+    else:
+        os_name = "Linux"
+
     print("\n" + "═" * 45)
-    print("  WeatherGlass backend running")
+    print(f"  WeatherGlass — Running on {os_name}")
     print("  Open → http://localhost:5000")
-    print("  Press CTRL+C to stop the server")
+    print("  Press CTRL+C to stop")
     print("═" * 45 + "\n")
 
+    # Auto open browser in background
     threading.Thread(target=open_browser, daemon=True).start()
 
-    app.run(debug=True, port=5000, use_reloader=False)
+    # Start Flask on all network interfaces
+    # 0.0.0.0 means it works on localhost AND
+    # also on your local network (other devices)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True,
+        use_reloader=False
+    )
